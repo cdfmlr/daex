@@ -1,5 +1,9 @@
 #!python3
 
+# f2utf8
+# Yet another util converts files to UTF-8.
+# CDFMLR 2021
+
 import chardet
 import argparse
 
