@@ -1,0 +1,894 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{ex\_5\_4}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{-\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{ux4e60ux9898-5.4}{%
+\section{习题 5.4}\label{ux4e60ux9898-5.4}}
+
+\begin{figure}
+\centering
+\includegraphics{https://tva1.sinaimg.cn/large/008i3skNly1grbv1zgy77j316008ejut.jpg}
+\caption{习题 5.4}
+\end{figure}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{read.csv}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{ex\PYZus{}5\PYZus{}4.csv\PYZdq{}}\PY{p}{)}\PY{p}{[}\PY{l+m}{\PYZhy{}1}\PY{p}{]}
+\PY{n+nf}{attach}\PY{p}{(}\PY{n}{data}\PY{p}{)}
+\PY{n}{data}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 35 × 8
+\begin{tabular}{llllllll}
+ group & x1 & x2 & x3 & x4 & x5 & x6 & x7\\
+ <int> & <dbl> & <int> & <dbl> & <dbl> & <int> & <dbl> & <int>\\
+\hline
+	 1 & 6.6 &  39 & 1.0 & 6.0 &  6 & 0.12 &  20\\
+	 1 & 6.6 &  39 & 1.0 & 6.0 & 12 & 0.12 &  20\\
+	 1 & 6.1 &  47 & 1.0 & 6.0 &  6 & 0.08 &  12\\
+	 1 & 6.1 &  47 & 1.0 & 6.0 & 12 & 0.08 &  12\\
+	 1 & 8.4 &  32 & 2.0 & 7.5 & 19 & 0.35 &  75\\
+	 1 & 7.2 &   6 & 1.0 & 7.0 & 28 & 0.30 &  30\\
+	 1 & 8.4 & 113 & 3.5 & 6.0 & 18 & 0.15 &  75\\
+	 1 & 7.5 &  52 & 1.0 & 6.0 & 12 & 0.16 &  40\\
+	 1 & 7.5 &  52 & 3.5 & 7.5 &  6 & 0.16 &  40\\
+	 1 & 8.3 & 113 & 0.0 & 7.5 & 35 & 0.12 & 180\\
+	 1 & 7.8 & 172 & 1.0 & 3.5 & 14 & 0.21 &  45\\
+	 1 & 7.8 & 172 & 1.5 & 3.0 & 15 & 0.21 &  45\\
+	 2 & 8.4 &  32 & 1.0 & 5.0 &  4 & 0.35 &  75\\
+	 2 & 8.4 &  32 & 2.0 & 9.0 & 10 & 0.35 &  75\\
+	 2 & 8.4 &  32 & 2.5 & 4.0 & 10 & 0.35 &  75\\
+	 2 & 6.3 &  11 & 4.5 & 7.5 &  3 & 0.20 &  15\\
+	 2 & 7.0 &   8 & 4.5 & 4.5 &  9 & 0.25 &  30\\
+	 2 & 7.0 &   8 & 6.0 & 7.5 &  4 & 0.25 &  30\\
+	 2 & 7.0 &   8 & 1.5 & 6.0 &  1 & 0.25 &  30\\
+	 2 & 8.3 & 161 & 1.5 & 4.0 &  4 & 0.08 &  70\\
+	 2 & 8.3 & 161 & 0.5 & 2.5 &  1 & 0.08 &  70\\
+	 2 & 7.2 &   6 & 3.5 & 4.0 & 12 & 0.30 &  30\\
+	 2 & 7.2 &   6 & 1.0 & 3.0 &  3 & 0.30 &  30\\
+	 2 & 7.2 &   6 & 1.0 & 6.0 &  5 & 0.30 &  30\\
+	 2 & 5.5 &   6 & 2.5 & 3.0 &  7 & 0.18 &  18\\
+	 2 & 8.4 & 113 & 3.5 & 4.5 &  6 & 0.15 &  75\\
+	 2 & 8.4 & 113 & 3.5 & 4.5 &  8 & 0.15 &  75\\
+	 2 & 7.5 &  52 & 1.0 & 6.0 &  6 & 0.16 &  40\\
+	 2 & 7.5 &  52 & 1.0 & 7.5 &  8 & 0.16 &  40\\
+	 2 & 8.3 &  97 & 0.0 & 6.0 &  5 & 0.15 & 180\\
+	 2 & 8.3 &  97 & 2.5 & 6.0 &  5 & 0.15 & 180\\
+	 2 & 8.3 &  89 & 0.0 & 6.0 & 10 & 0.16 & 180\\
+	 2 & 8.3 &  56 & 1.5 & 6.0 & 13 & 0.25 & 180\\
+	 2 & 7.8 & 172 & 1.0 & 3.5 &  6 & 0.21 &  45\\
+	 2 & 7.8 & 233 & 1.0 & 4.5 &  6 & 0.18 &  45\\
+\end{tabular}
+
+
+    
+    通过 MASS 包的 lda 进行判别分析：
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{library}\PY{p}{(}\PY{n}{MASS}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{ux5148ux9a8cux6982ux7387ux6309ux6bd4ux4f8bux5206ux914d}{%
+\subsection{先验概率按比例分配}\label{ux5148ux9a8cux6982ux7387ux6309ux6bd4ux4f8bux5206ux914d}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{l} \PY{o}{=} \PY{n+nf}{lda}\PY{p}{(}\PY{n}{group} \PY{o}{\PYZti{}} \PY{n}{.}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{data}\PY{p}{)}\PY{p}{;} \PY{n}{l}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+Call:
+lda(group \textasciitilde{} ., data = data)
+
+Prior probabilities of groups:
+        1         2 
+0.3428571 0.6571429 
+
+Group means:
+        x1       x2       x3      x4        x5        x6       x7
+1 7.358333 73.66667 1.458333 6.00000 15.250000 0.1716667 49.50000
+2 7.686957 67.43478 2.043478 5.23913  6.347826 0.2156522 70.34783
+
+Coefficients of linear discriminants:
+             LD1
+x1 -1.747293e-01
+x2  1.416021e-05
+x3  2.072826e-01
+x4 -2.052228e-01
+x5 -1.935168e-01
+x6  8.395266e+00
+x7  1.917129e-02
+    \end{Verbatim}
+
+    
+    输出结果中 (ref https://cloud.tencent.com/developer/article/1553504 )：
+
+\begin{itemize}
+\tightlist
+\item
+  Call 表示调用方法；
+\item
+  Prior probabilities of groups 表示先验概率；
+\item
+  Group means 表示每一类样本的均值；
+\item
+  Coefficients of linear discriminants 表示线性判别系数；
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 输出线性判别函数}
+\PY{n+nf}{cat}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{W =\PYZdq{}}\PY{p}{,} \PY{n+nf}{paste}\PY{p}{(}\PY{n+nf}{round}\PY{p}{(}\PY{n}{l}\PY{o}{\PYZdl{}}\PY{n}{scaling}\PY{p}{,} \PY{l+m}{8}\PY{p}{)}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{*x\PYZus{}\PYZdq{}}\PY{p}{,} \PY{l+m}{1}\PY{o}{:}\PY{l+m}{7}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{ +\PYZdq{}}\PY{p}{,} \PY{n}{sep}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+W = -0.17472934*x\_1 + 1.416e-05*x\_2 + 0.20728259*x\_3 + -0.20522277*x\_4 +
+-0.1935168*x\_5 + 8.395266*x\_6 + 0.01917129*x\_7 +
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{pred} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{predict}\PY{p}{(}\PY{n}{l}\PY{p}{)}
+\PY{n}{pred.tab} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{data.frame}\PY{p}{(}\PY{n}{pred}\PY{p}{,} \PY{n}{data.group}\PY{o}{=}\PY{n}{group}\PY{p}{)}\PY{p}{;} \PY{n}{pred.tab}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 35 × 5
+\begin{tabular}{r|lllll}
+  & class & posterior.1 & posterior.2 & LD1 & data.group\\
+  & <fct> & <dbl> & <dbl> & <dbl> & <int>\\
+\hline
+	1 & 1 & 0.6859662059 & 3.140338e-01 & -0.9541788 & 1\\
+	2 & 1 & 0.9807303897 & 1.926961e-02 & -2.1152796 & 1\\
+	3 & 1 & 0.8665260167 & 1.334740e-01 & -1.3558819 & 1\\
+	4 & 1 & 0.9934324560 & 6.567544e-03 & -2.5169826 & 1\\
+	5 & 1 & 0.6533234780 & 3.466765e-01 & -0.8997285 & 1\\
+	6 & 1 & 0.9998065233 & 1.934767e-04 & -3.8192153 & 1\\
+	7 & 1 & 0.9517049526 & 4.829505e-02 & -1.7653599 & 1\\
+	8 & 1 & 0.9172384730 & 8.276153e-02 & -1.5531155 & 1\\
+	9 & 2 & 0.2119047770 & 7.880952e-01 & -0.1816424 & 1\\
+	10 & 1 & 0.9999488458 & 5.115424e-05 & -4.3098682 & 1\\
+	11 & 1 & 0.6906278386 & 3.093722e-01 & -0.9621920 & 1\\
+	12 & 1 & 0.6832009800 & 3.167990e-01 & -0.9494561 & 1\\
+	13 & 2 & 0.0003137630 & 9.996862e-01 &  2.3087978 & 2\\
+	14 & 2 & 0.0371741982 & 9.628258e-01 &  0.5340885 & 2\\
+	15 & 2 & 0.0018008368 & 9.981992e-01 &  1.6638437 & 2\\
+	16 & 2 & 0.0258888529 & 9.741111e-01 &  0.6718136 & 2\\
+	17 & 2 & 0.0233176914 & 9.766823e-01 &  0.7113608 & 2\\
+	18 & 2 & 0.0039412644 & 9.960587e-01 &  1.3742004 & 2\\
+	19 & 2 & 0.0044431240 & 9.955569e-01 &  1.3298132 & 2\\
+	20 & 2 & 0.0724237508 & 9.275762e-01 &  0.2743832 & 2\\
+	21 & 2 & 0.0121654340 & 9.878346e-01 &  0.9554851 & 2\\
+	22 & 2 & 0.0511593102 & 9.488407e-01 &  0.4109283 & 2\\
+	23 & 2 & 0.0011189212 & 9.988811e-01 &  1.8395958 & 2\\
+	24 & 2 & 0.0167026449 & 9.832974e-01 &  0.8368939 & 2\\
+	25 & 2 & 0.0479575131 & 9.520425e-01 &  0.4360049 & 2\\
+	26 & 2 & 0.0155093991 & 9.844906e-01 &  0.8646758 & 2\\
+	27 & 2 & 0.0430578686 & 9.569421e-01 &  0.4776422 & 2\\
+	28 & 2 & 0.3223405288 & 6.776595e-01 & -0.3920147 & 2\\
+	29 & 1 & 0.7578938074 & 2.421062e-01 & -1.0868825 & 2\\
+	30 & 2 & 0.0006240626 & 9.993759e-01 &  2.0551013 & 2\\
+	31 & 2 & 0.0001531707 & 9.998468e-01 &  2.5733078 & 2\\
+	32 & 2 & 0.0068117313 & 9.931883e-01 &  1.1713567 & 2\\
+	33 & 2 & 0.0018353157 & 9.981647e-01 &  1.6568369 & 2\\
+	34 & 2 & 0.0324563440 & 9.675437e-01 &  0.5859424 & 2\\
+	35 & 2 & 0.1036058164 & 8.963942e-01 &  0.1297254 & 2\\
+\end{tabular}
+
+
+    
+    输出结果分别为分类结果和后验概率。在后面加上了数据的真实分类情况作为比较。
+
+下面查看误判情况：
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{table}\PY{p}{(}\PY{n}{group}\PY{p}{,} \PY{n}{pred}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+     
+group  1  2
+    1 11  1
+    2  1 22
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{bad} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{pred.tab}\PY{p}{[}\PY{n}{pred}\PY{o}{\PYZdl{}}\PY{n}{class} \PY{o}{!=} \PY{n}{data}\PY{o}{\PYZdl{}}\PY{n}{group}\PY{p}{,}\PY{p}{]}\PY{p}{;} \PY{n}{bad}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 2 × 5
+\begin{tabular}{r|lllll}
+  & class & posterior.1 & posterior.2 & LD1 & data.group\\
+  & <fct> & <dbl> & <dbl> & <dbl> & <int>\\
+\hline
+	9 & 2 & 0.2119048 & 0.7880952 & -0.1816424 & 1\\
+	29 & 1 & 0.7578938 & 0.2421062 & -1.0868825 & 2\\
+\end{tabular}
+
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{length}\PY{p}{(}\PY{n}{bad}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)} \PY{o}{/} \PY{n+nf}{length}\PY{p}{(}\PY{n}{pred}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    0.0571428571428571
+
+    
+    有两个样本误判：
+
+\begin{itemize}
+\tightlist
+\item
+  9 号样本误判到 \(G_2\)；
+\item
+  29 号样本误判到 \(G_1\).
+\end{itemize}
+
+误判率为: \(5.71\%\)
+
+    交叉确认误判率 (ref https://zhuanlan.zhihu.com/p/23965433 )：
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{ll} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{lda}\PY{p}{(}\PY{n}{group} \PY{o}{\PYZti{}} \PY{n}{.}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{data}\PY{p}{,} \PY{n}{CV}\PY{o}{=}\PY{k+kc}{TRUE}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{table}\PY{p}{(}\PY{n}{group}\PY{p}{,} \PY{n}{ll}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+     
+group  1  2
+    1  8  4
+    2  2 21
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{cv.bad} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{pred.tab}\PY{p}{[}\PY{n}{ll}\PY{o}{\PYZdl{}}\PY{n}{class} \PY{o}{!=} \PY{n}{data}\PY{o}{\PYZdl{}}\PY{n}{group}\PY{p}{,}\PY{p}{]}\PY{p}{;} \PY{n}{cv.bad}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 6 × 5
+\begin{tabular}{r|lllll}
+  & class & posterior.1 & posterior.2 & LD1 & data.group\\
+  & <fct> & <dbl> & <dbl> & <dbl> & <int>\\
+\hline
+	5 & 1 & 0.6533235 & 0.3466765 & -0.8997285 & 1\\
+	9 & 2 & 0.2119048 & 0.7880952 & -0.1816424 & 1\\
+	11 & 1 & 0.6906278 & 0.3093722 & -0.9621920 & 1\\
+	12 & 1 & 0.6832010 & 0.3167990 & -0.9494561 & 1\\
+	29 & 1 & 0.7578938 & 0.2421062 & -1.0868825 & 2\\
+	35 & 2 & 0.1036058 & 0.8963942 &  0.1297254 & 2\\
+\end{tabular}
+
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{length}\PY{p}{(}\PY{n}{cv.bad}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)} \PY{o}{/} \PY{n+nf}{length}\PY{p}{(}\PY{n}{pred}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    0.171428571428571
+
+    
+    共有 6 个样本误判，误判率 \(17.14\%\).
+
+    \hypertarget{ux5148ux9a8cux6982ux7387ux76f8ux7b49}{%
+\subsection{先验概率相等}\label{ux5148ux9a8cux6982ux7387ux76f8ux7b49}}
+
+    假设 \(\Sigma_1=\Sigma_2\)， 先验概率按相同的条件下，还是用 lda
+函数来做，需要多传一个参数指定先验概率。
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{le} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{lda}\PY{p}{(}\PY{n}{group} \PY{o}{\PYZti{}} \PY{n}{.}\PY{p}{,} \PY{n}{data} \PY{o}{=} \PY{n}{data}\PY{p}{,} \PY{n}{prior} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)} \PY{o}{/} \PY{l+m}{2}\PY{p}{)}
+\PY{n+nf}{print}\PY{p}{(}\PY{n}{le}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Call:
+lda(group \textasciitilde{} ., data = data, prior = c(1, 1)/2)
+
+Prior probabilities of groups:
+  1   2
+0.5 0.5
+
+Group means:
+        x1       x2       x3      x4        x5        x6       x7
+1 7.358333 73.66667 1.458333 6.00000 15.250000 0.1716667 49.50000
+2 7.686957 67.43478 2.043478 5.23913  6.347826 0.2156522 70.34783
+
+Coefficients of linear discriminants:
+             LD1
+x1 -1.747293e-01
+x2  1.416021e-05
+x3  2.072826e-01
+x4 -2.052228e-01
+x5 -1.935168e-01
+x6  8.395266e+00
+x7  1.917129e-02
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 输出线性判别函数}
+\PY{n+nf}{cat}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{W =\PYZdq{}}\PY{p}{,} \PY{n+nf}{paste}\PY{p}{(}\PY{n+nf}{round}\PY{p}{(}\PY{n}{le}\PY{o}{\PYZdl{}}\PY{n}{scaling}\PY{p}{,} \PY{l+m}{8}\PY{p}{)}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{*x\PYZus{}\PYZdq{}}\PY{p}{,} \PY{l+m}{1}\PY{o}{:}\PY{l+m}{7}\PY{p}{,} \PY{l+s}{\PYZdq{}}\PY{l+s}{ +\PYZdq{}}\PY{p}{,} \PY{n}{sep}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+W = -0.17472934*x\_1 + 1.416e-05*x\_2 + 0.20728259*x\_3 + -0.20522277*x\_4 +
+-0.1935168*x\_5 + 8.395266*x\_6 + 0.01917129*x\_7 +
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{pred\PYZus{}e} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{predict}\PY{p}{(}\PY{n}{le}\PY{p}{)}
+\PY{n}{pred\PYZus{}e.tab} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{data.frame}\PY{p}{(}\PY{n}{pred\PYZus{}e}\PY{p}{,} \PY{n}{data.group}\PY{o}{=}\PY{n}{group}\PY{p}{)}\PY{p}{;} \PY{n}{pred.tab}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 35 × 5
+\begin{tabular}{r|lllll}
+  & class & posterior.1 & posterior.2 & LD1 & data.group\\
+  & <fct> & <dbl> & <dbl> & <dbl> & <int>\\
+\hline
+	1 & 1 & 0.6859662059 & 3.140338e-01 & -0.9541788 & 1\\
+	2 & 1 & 0.9807303897 & 1.926961e-02 & -2.1152796 & 1\\
+	3 & 1 & 0.8665260167 & 1.334740e-01 & -1.3558819 & 1\\
+	4 & 1 & 0.9934324560 & 6.567544e-03 & -2.5169826 & 1\\
+	5 & 1 & 0.6533234780 & 3.466765e-01 & -0.8997285 & 1\\
+	6 & 1 & 0.9998065233 & 1.934767e-04 & -3.8192153 & 1\\
+	7 & 1 & 0.9517049526 & 4.829505e-02 & -1.7653599 & 1\\
+	8 & 1 & 0.9172384730 & 8.276153e-02 & -1.5531155 & 1\\
+	9 & 2 & 0.2119047770 & 7.880952e-01 & -0.1816424 & 1\\
+	10 & 1 & 0.9999488458 & 5.115424e-05 & -4.3098682 & 1\\
+	11 & 1 & 0.6906278386 & 3.093722e-01 & -0.9621920 & 1\\
+	12 & 1 & 0.6832009800 & 3.167990e-01 & -0.9494561 & 1\\
+	13 & 2 & 0.0003137630 & 9.996862e-01 &  2.3087978 & 2\\
+	14 & 2 & 0.0371741982 & 9.628258e-01 &  0.5340885 & 2\\
+	15 & 2 & 0.0018008368 & 9.981992e-01 &  1.6638437 & 2\\
+	16 & 2 & 0.0258888529 & 9.741111e-01 &  0.6718136 & 2\\
+	17 & 2 & 0.0233176914 & 9.766823e-01 &  0.7113608 & 2\\
+	18 & 2 & 0.0039412644 & 9.960587e-01 &  1.3742004 & 2\\
+	19 & 2 & 0.0044431240 & 9.955569e-01 &  1.3298132 & 2\\
+	20 & 2 & 0.0724237508 & 9.275762e-01 &  0.2743832 & 2\\
+	21 & 2 & 0.0121654340 & 9.878346e-01 &  0.9554851 & 2\\
+	22 & 2 & 0.0511593102 & 9.488407e-01 &  0.4109283 & 2\\
+	23 & 2 & 0.0011189212 & 9.988811e-01 &  1.8395958 & 2\\
+	24 & 2 & 0.0167026449 & 9.832974e-01 &  0.8368939 & 2\\
+	25 & 2 & 0.0479575131 & 9.520425e-01 &  0.4360049 & 2\\
+	26 & 2 & 0.0155093991 & 9.844906e-01 &  0.8646758 & 2\\
+	27 & 2 & 0.0430578686 & 9.569421e-01 &  0.4776422 & 2\\
+	28 & 2 & 0.3223405288 & 6.776595e-01 & -0.3920147 & 2\\
+	29 & 1 & 0.7578938074 & 2.421062e-01 & -1.0868825 & 2\\
+	30 & 2 & 0.0006240626 & 9.993759e-01 &  2.0551013 & 2\\
+	31 & 2 & 0.0001531707 & 9.998468e-01 &  2.5733078 & 2\\
+	32 & 2 & 0.0068117313 & 9.931883e-01 &  1.1713567 & 2\\
+	33 & 2 & 0.0018353157 & 9.981647e-01 &  1.6568369 & 2\\
+	34 & 2 & 0.0324563440 & 9.675437e-01 &  0.5859424 & 2\\
+	35 & 2 & 0.1036058164 & 8.963942e-01 &  0.1297254 & 2\\
+\end{tabular}
+
+
+    
+    误判情况：
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{table}\PY{p}{(}\PY{n}{group}\PY{p}{,} \PY{n}{pred\PYZus{}e}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+     
+group  1  2
+    1 11  1
+    2  1 22
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{bad\PYZus{}e} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{pred\PYZus{}e.tab}\PY{p}{[}\PY{n}{pred\PYZus{}e}\PY{o}{\PYZdl{}}\PY{n}{class} \PY{o}{!=} \PY{n}{data}\PY{o}{\PYZdl{}}\PY{n}{group}\PY{p}{,}\PY{p}{]}\PY{p}{;} \PY{n}{bad\PYZus{}e}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 2 × 5
+\begin{tabular}{r|lllll}
+  & class & posterior.1 & posterior.2 & LD1 & data.group\\
+  & <fct> & <dbl> & <dbl> & <dbl> & <int>\\
+\hline
+	9 & 2 & 0.3400897 & 0.6599103 &  0.2444662 & 1\\
+	29 & 1 & 0.8571422 & 0.1428578 & -0.6607739 & 2\\
+\end{tabular}
+
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 误判率}
+\PY{n+nf}{length}\PY{p}{(}\PY{n}{bad\PYZus{}e}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)} \PY{o}{/} \PY{n+nf}{length}\PY{p}{(}\PY{n}{pred\PYZus{}e}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    0.0571428571428571
+
+    
+    交叉确认：
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{lel} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{lda}\PY{p}{(}\PY{n}{group} \PY{o}{\PYZti{}} \PY{n}{.}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{data}\PY{p}{,}  \PY{n}{prior} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)} \PY{o}{/} \PY{l+m}{2}\PY{p}{,} \PY{n}{CV}\PY{o}{=}\PY{k+kc}{TRUE}\PY{p}{)}
+\PY{n+nf}{table}\PY{p}{(}\PY{n}{group}\PY{p}{,} \PY{n}{lel}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+     
+group  1  2
+    1 11  1
+    2  3 20
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{cv.bad\PYZus{}e} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{pred\PYZus{}e.tab}\PY{p}{[}\PY{n}{lel}\PY{o}{\PYZdl{}}\PY{n}{class} \PY{o}{!=} \PY{n}{data}\PY{o}{\PYZdl{}}\PY{n}{group}\PY{p}{,}\PY{p}{]}\PY{p}{;} \PY{n}{cv.bad\PYZus{}e}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 4 × 5
+\begin{tabular}{r|lllll}
+  & class & posterior.1 & posterior.2 & LD1 & data.group\\
+  & <fct> & <dbl> & <dbl> & <dbl> & <int>\\
+\hline
+	9 & 2 & 0.3400897 & 0.6599103 &  0.24446615 & 1\\
+	28 & 2 & 0.4769042 & 0.5230958 &  0.03409383 & 2\\
+	29 & 1 & 0.8571422 & 0.1428578 & -0.66077393 & 2\\
+	35 & 2 & 0.1813542 & 0.8186458 &  0.55583396 & 2\\
+\end{tabular}
+
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 误判率}
+\PY{n+nf}{length}\PY{p}{(}\PY{n}{cv.bad\PYZus{}e}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)} \PY{o}{/} \PY{n+nf}{length}\PY{p}{(}\PY{n}{pred\PYZus{}e}\PY{o}{\PYZdl{}}\PY{n}{class}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    0.114285714285714
+
+    
+    这里得到了误判率 \(11.43\%\).
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
